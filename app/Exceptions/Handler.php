@@ -2,12 +2,11 @@
 
 namespace App\Exceptions;
 
-use App\Traits\ApiResponseTrait;
+use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
@@ -16,7 +15,8 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
-    use ApiResponseTrait;
+    use ApiResponser;
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -63,15 +63,15 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof ModelNotFoundException) {
-            $model =strtolower(class_basename($exception->getModel()));
+            $model =    strtolower(class_basename ($exception->getModel()));
 
             return $this->errorResponse("Does not exist any instance of {$model} with the given id", Response::HTTP_NOT_FOUND);
         }
 
         if ($exception instanceof ValidationException) {
-            $error = $exception->validator->errors()->getMessages();
+            $errors =  $exception->validator->errors()->getMessages();
 
-            return $this->errorResponse($error, Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->errorResponse($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if ($exception instanceof AuthorizationException) {
@@ -81,7 +81,6 @@ class Handler extends ExceptionHandler
         if ($exception instanceof AuthenticationException) {
             return $this->errorResponse($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
-
         if (env('APP_DEBUG', false)) {
             return parent::render($request, $exception);
         }
