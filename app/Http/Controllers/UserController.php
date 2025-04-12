@@ -23,7 +23,7 @@ class UserController extends Controller {
             'username' => 'required|max:20',
             'password' => 'required|max:20',
             'gender' => 'required|in:Male,Female',
-            'jobid' => 'required|numeric|min:1|not_in:0'
+            'jobid' => 'required|numeric|min:1|not_in:0',
         ];
         $this->validate($request, $rules);
         $user = User::create($request->all());
@@ -40,7 +40,7 @@ class UserController extends Controller {
             'username' => 'max:20',
             'password' => 'max:20',
             'gender' => 'in:Male,Female',
-            'jobid' => 'required|numeric|min:1|not_in:0'
+            'jobid' => 'required|numeric|min:1|not_in:0',
         ];
         $this->validate($request, $rules);
         $user = User::findOrFail($id);
